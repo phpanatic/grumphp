@@ -95,27 +95,7 @@ class Phpcs extends AbstractExternalTask
         );
 
         if (!$process->isSuccessful()) {
-            $failedResult = TaskResult::createFailed($this, $context, $this->formatter->format($process));
-
-            try {
-                $fixerProcess = $this->createFixerProcess($this->formatter->getSuggestedFiles());
-            } catch (CommandNotFoundException|ExecutableNotFoundException $e) {
-                return $failedResult->withAppendedMessage(
-                    PHP_EOL.'Info: phpcbf could not be found. Please consider to install it for auto-fixing.'
-                );
-            }
-
-            if ($fixerProcess) {
-                return FixableProcessResultProvider::provide(
-                    $failedResult,
-                    function () use ($fixerProcess): Process {
-                        return $fixerProcess;
-                    },
-                    [0, 1]
-                );
-            }
-
-            return $failedResult;
+            return TaskResult::createFailed($this, $context, $this->formatter->format($process));
         }
 
         return TaskResult::createPassed($this, $context);
